@@ -369,6 +369,12 @@ def auth_callback():
 
 #####################################################################################################
 
+
+@app.route('/welcom')
+def welcom():    
+    return render_template('welcom.html')  # Flask가 HTML을 렌더링
+
+
 @app.route('/')
 def home():
     print("홈으로")
@@ -379,4 +385,4 @@ def serviceLogin():
     return render_template('profile.html')  # Flask가 HTML을 렌더링
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=False, port=5000)

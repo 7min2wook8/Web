@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,9 +60,15 @@
             </div>
         </div>
         <div class="content_backImg">
-            <video  src="../static/video/17926-286994407_small(딥러닝).mp4" alt="" id="backImg" class="backImg" autoplay muted loop playsinline>
-        </div>
+            <!-- <video  src="../static/video/17926-286994407_small(딥러닝).mp4" alt="" id="backImg" class="backImg" autoplay muted loop playsinline> -->
+                <!-- <video  src="{{ url_for('static', filename='videos/17926-286994407_small(딥러닝).mp4') }}" alt="" id="backImg" class="backImg" autoplay muted loop></video> -->
 
+                <video autoplay muted loop playsinline>
+                    <source src="{{ url_for('static', filename='videos/17926-286994407_small(딥러닝).mp4') }}" type="video/mp4">
+                </video>
+
+        </div>
+        
         
         </video>
        
@@ -86,12 +92,12 @@
                 </p>
             </div>
 
-            
-            <video  
-                src="../static/video/0_Technology_Circuit Board_1920x1080.mp4"
+            <!--src="../static/videos/0_Technology_Circuit Board_1920x1080.mp4"-->
+            <video               
+                src="{{ url_for('static', filename='videos/0_Technology_Circuit Board_1920x1080.mp4') }}"
                 alt="" id="right_content_backimg" 
                 class="right_content_backimg" 
-                autoplay muted loop playsinline>
+                autoplay muted loop>
             </video>
             
             
