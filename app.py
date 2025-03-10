@@ -200,8 +200,11 @@ def dashboard():
 # 추가 쿼리 insert into mydb.memberinfo (id,pw,name) values ("7min2wook8@naver.com","qweasd456" ,"parminwook")
 
 ##############################################################################################
-openai_api_key= os.getenv("api_key")
+openai_api_key= os.getenv("openai_api_key")
 openai.api_key = openai_api_key
+
+
+openWeathermap_api_key = os.getenv("openWeathermap_api_key")
 
 @app.route('/ask', methods=['POST'])
 def ask():
@@ -213,7 +216,7 @@ def ask():
     
     if "날씨" in user_input1:
         # OpenWeatherMap API 사용 예제
-        api_key = "4ca74fd3eca28857a66c3ebf44b2c3b3"
+        api_key = openWeathermap_api_key
         city = "Seoul"
         url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&lang=kr&units=metric"
 
@@ -230,18 +233,18 @@ def ask():
        
         # OpenAI API 호출 (GPT-3 예시)
         try:
-            print("response 호출 : ")
+            print("response 호출")
             # OpenAI API 호출
             
-            response = openai.ChatCompletion.create(
+            client = openai.OpenAI()
+            response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": "안녕"}]
-            )
-
-            print("Full Response:", response)  # 응답 확인
-
+                messages=[{"role": "user", "content": "Hello!"}])
+            
+            if(response == "" ):
+                return 
             reply = response.choices[0].message.content
-
+            
             return jsonify({"reply": reply})
 
         except Exception as e:
