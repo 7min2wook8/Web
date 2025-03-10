@@ -76,7 +76,7 @@
       <h1>Sign in</h1>
       <div class="social-container">
         <a href="#" class="social"><b>f</b><i class="fab fa-facebook-f"></i></a>
-        <a href="#" class="social"><b>G+</b><i class="fab fa-google-plus-g"></i></a>
+        <a href="/login_Google" class="social"><b>G+</b><i class="fab fa-google-plus-g"></i></a>
         <a href="#" class="social"><b>in</b><i class="fab fa-linkedin-in"></i></a>
       </div>
       <span>or use your account</span>
@@ -114,13 +114,7 @@
             if (!contentType || !contentType.includes("application/json")) {
                   throw new Error("서버 응답이 JSON이 아닙니다.");
             }
-
-            // console.log("🚀 Response 객체:", response); // 전체 response 객체 확인
-            // console.log("📌 상태 코드:", response.status); // HTTP 상태 코드 확인
-            // console.log("📌 상태 텍스트:", response.statusText); // 상태 메시지 확인
-
-            // console.log("📌 응답 Content-Type:", response.headers.get("content-type"));
-
+            
             if (!response.ok) {
             console.error(`❌ 서버 오류: ${response.status}`);
             return;
@@ -130,7 +124,7 @@
               console.log("📌 응답 JSON 데이터:", data);
 
               if (data.status == "success") {
-
+                
               window.location.href = data.redirect;  // 페이지 이동
 
               }
@@ -145,20 +139,6 @@
          return false;
       }
     </script>
-
-<!--세션 확인 스크립트-->
-    <script>
-      async function checkSession() {
-        const response = await fetch('/dashboard', {
-        method: 'GET',
-        credentials: 'include'  // 세션 유지!
-    });
-
-    const data = await response.json();
-    console.log(data);
-}
-    </script>
-
 
 <!------------------------------------------------------------------------------>
 

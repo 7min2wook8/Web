@@ -1,0 +1,155 @@
+
+
+.content{
+    position: relative;
+    width: 100%;
+    height:1000px;
+    padding-top: 50px;
+    /* border: 1px solid black; */
+    /* overflow: hidden; */
+    
+}
+
+/*content 내 중앙에 영역 지정*/
+.content_center{
+    position: absolute;
+    margin: auto;
+    width: 90%;
+    max-width: 1080px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 900;
+    
+}
+
+
+/*폰트 디자인 지정*/
+.bicFont p{
+    
+    font-size: 70px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -.2px;
+    color: var(--text-00);
+}
+
+.content_backImg{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+    overflow: hidden;
+    
+}
+
+.link_start_wrap{
+    margin-top: 50px;
+    text-align: center;
+    align-items: center;
+}
+
+.link_start{
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    padding: 0 40px;
+    width: 200px;
+    height: 60px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    border: 1.4px solid var(--clova-black);
+    border-radius: 30px;
+    background-color: #000;
+    box-sizing: border-box;
+    
+}
+
+.link_start .link_start_gif{
+
+
+    position: relative;
+    height: 60px;
+    vertical-align: top;
+    margin: 0;
+    margin-left: 6px;
+    padding: 0;
+
+    animation-name: CoverPage_positionAnimation___iQI8;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+
+}
+
+.link_start .link_start_gif .injected-svg{
+    /* 수직 중앙 정렬하기 */
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+/*화살표 좌우로 움직이는 애니메이션*/
+@keyframes CoverPage_positionAnimation___iQI8 {
+    0% {
+        transform: translateX(0)
+    }
+
+    33.34% {
+        transform: translateX(3px)
+    }
+
+    to {
+        transform: translateX(0)
+    }
+}
+
+
+.left_content{
+    
+    width: 50%;
+    margin-left: 0;
+    
+}
+
+
+.left_content p{
+    font-size: 50px;
+    font-weight: 700;
+}
+
+.left_content .left_content_text1{
+    font-size: 20px;
+    color:  #4181ff;
+}
+
+
+.left_content .left_content_text3{
+    font-size: 20px;
+}
+
+.right_content_backimg{
+    position: absolute;
+    top: 0;
+    right: 0;
+    height:  100%;
+    width: 50%;
+}
+
+
+
+/*3번 content **********************************************************/
+
+
+.content_3content_top p:first-child{
+   
+    color:  #4181ff;
+}
+
+
+
+
+/**/

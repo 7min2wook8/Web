@@ -26,6 +26,8 @@ from flask_session import Session
 #시간관련 임포
 from datetime import timedelta
 
+#오픈ai 정보 임포트
+import openai
 
 conn  = None
 
@@ -54,6 +56,7 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=1)  # 1시간 유지
 
 Session(app)
 
+
 try:
     db = pymysql.connect(
         host='localhost',
@@ -66,9 +69,14 @@ try:
 except Exception as e:
     print(e)
 
+
+
+
+api_key="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"
 # 연결이 성공했으면 커서 생성
 cursor = db.cursor()
 
+openai.api_key = api_key
 
 
 @app.route("/register", methods=["POST"])
@@ -93,7 +101,7 @@ def register():
             cursor.execute("insert into mydb.memberinfo (id, pw, name) values (%s, %s, %s)", (user_Email, hashed_password, user_Name))
             db.commit()
             print('회원가입 실패1')
-            return jsonify({"status": "success", "message": "register succes", "redirect": "/dashboard"}), 200
+            return jsonify({"status": "success", "message": "register succes", "redirect": "/"}), 200
 
         
         except pymysql.err.IntegrityError:
@@ -132,8 +140,8 @@ def login():
 
         # if user_Pw == '':
         #     user_Pw = "qweasd456"
-
-        #return jsonify({"status": "success", "message": "login succes", "redirect": "/dashboard"}), 200
+        # session["user"] = user_Email
+        # return jsonify({"status": "success", "message": "login succes", "redirect": "/"}), 200
         try:
             cursor.execute("select ID,PW,name from mydb.memberinfo where ID = %s", (user_Email,))
             user = cursor.fetchone()
@@ -141,7 +149,7 @@ def login():
             if user and bcrypt.check_password_hash(user[1], user_Pw):
                 session["user"] = user_Email
                 print('로그인 성공')
-                return jsonify({"status": "success", "message": "login succes", "redirect": "/dashboard"}), 200
+                return jsonify({"status": "success", "message": "login succes", "redirect": "/"}), 200
         
             else:
                 print('로그인 실패1')
@@ -156,25 +164,52 @@ def login():
         return jsonify({"status": "fail", "message": "fail , server check please"}),402
 
 
+
+
+# 로그아웃
+@app.route("/logout")
+def logout():
+    
+    if "user" not in session:
+        print('로그인 안되어있음')
+        return redirect("/")  # 로그인 안 되어 있으면 로그인 페이지로 이동
+    
+    session.pop("user", None)
+    return redirect("/")
+
+
+# @app.route('/logout')
+# def logout():
+#     session.pop("user", None)  # 세션 삭제
+#     return render_template('index.html')  # Flask가 HTML을 렌더링
+#     return jsonify({"status": "success", "message": "Logged out"}), 200
+
+#로그인 상태 유무 확인
 @app.route("/dashboard")
 def dashboard():
-    if "user" not in session:
-        return jsonify({"status": "success", "message": f"Welcome, {session['user']}!"}), 200
-        return redirect("/login")  # 로그인 안 되어 있으면 로그인 페이지로 이동
+    print("/dashboard 실행")
+    print(session)
+    if "user" in session:
+        return jsonify({"status": "success"}), 200
     
-    return jsonify({"status": "fail", "message": "Unauthorized access"}), 401
+    return jsonify({"status": "fail", "message": "Unauthorized access"})
     return redirect("/")
 
 # 추가 쿼리 insert into mydb.memberinfo (id,pw,name) values ("7min2wook8@naver.com","qweasd456" ,"parminwook")
 
 ##############################################################################################
+api_key="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"
+openai.api_key = api_key
 
 @app.route('/ask', methods=['POST'])
 def ask():
     data = request.json
-    user_input = data.get('user_input', '').strip().lower()
+    user_input1 = data.get('user_input', '').strip().lower()
 
-    if "날씨" in user_input:
+    data2 = request.get_json()
+    user_message = data2.get("user_input", "")
+    
+    if "날씨" in user_input1:
         # OpenWeatherMap API 사용 예제
         api_key = "4ca74fd3eca28857a66c3ebf44b2c3b3"
         city = "Seoul"
@@ -187,6 +222,31 @@ def ask():
             response = f"현재 {city}의 날씨는 {description}, 온도는 {temp}°C입니다."
         else:
             response = "날씨 정보를 가져오는 데 실패했습니다."
+    
+    elif "날씨" not in user_message :
+
+       
+        # OpenAI API 호출 (GPT-3 예시)
+        try:
+            print("response 호출 : ")
+            # OpenAI API 호출
+            
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": "안녕"}]
+            )
+
+            print("Full Response:", response)  # 응답 확인
+
+            reply = response.choices[0].message.content
+
+            return jsonify({"reply": reply})
+
+        except Exception as e:
+            print("Error:", str(e))
+            return jsonify({"error": str(e)}), 500
+       
+    
     else:
         response = "질문을 이해하지 못했습니다. 다시 시도해 주세요."
 
@@ -258,9 +318,6 @@ def api_download_file():
 CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
-print("구글 연결")
-
-
 # 보안을 위한 세션 키 설정
 app.secret_key = os.urandom(24)
 
@@ -306,16 +363,6 @@ def auth_callback():
     # session["user"] = user_info
     # #return jsonify(user_info)
     # return render_template("profile.html", user=user_info)  # HTML 페이지 반환
-
-# 로그아웃
-@app.route("/logout")
-def logout():
-    print('로그아웃')
-    if "user" not in session:
-        return redirect("/login")  # 로그인 안 되어 있으면 로그인 페이지로 이동
-    
-    session.pop("user", None)
-    return redirect("/")
 
 #####################################################################################################
 
