@@ -1,3 +1,5 @@
+from flask import Flask, send_from_directory
+
 #flask 서버 임포
 from flask import Flask, render_template, redirect, url_for, session, request, jsonify
 from flask_cors import CORS  # CORS 추가
@@ -72,11 +74,6 @@ try:
     print("연결완료")
 except Exception as e:
     print(e)
-
-
-
-
-
 
 # 연결이 성공했으면 커서 생성
 cursor = db.cursor()
@@ -385,4 +382,4 @@ def serviceLogin():
     return render_template('profile.html')  # Flask가 HTML을 렌더링
 
 if __name__ == '__main__':
-    app.run(debug=False, port=5000)
+    app.run('0.0.0.0',debug=False, port=5000)
