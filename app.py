@@ -1,20 +1,16 @@
-
 #flask 서버 임포
 from flask import Flask, render_template, redirect, url_for, session, request, jsonify
 from flask_cors import CORS  # CORS 추가
 
-#보안 관련
-from werkzeug.utils import secure_filename
-import uuid
-
-import requests
-
-#파일 업로드 다운로드 관련
-import os
+#시간관련 임포
+from datetime import timedelta
 
 #구글 연동 관련
 import secrets
 from authlib.integrations.flask_client import OAuth
+
+#오픈ai 정보 임포트
+import openai
 
 
 #mysql연동
@@ -23,11 +19,19 @@ from flask_bcrypt import Bcrypt
 from flask_session import Session
 
 
-#시간관련 임포
-from datetime import timedelta
+#보안 관련
+from werkzeug.utils import secure_filename
+import uuid
 
-#오픈ai 정보 임포트
-import openai
+import requests
+
+#api 키 불러오기
+from dotenv import load_dotenv
+#파일 업로드 다운로드 관련
+import os
+
+# .env 파일 활성화
+load_dotenv()
 
 conn  = None
 
@@ -72,7 +76,8 @@ except Exception as e:
 
 
 
-api_key="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"
+api_key= os.getenv("api_key")
+
 # 연결이 성공했으면 커서 생성
 cursor = db.cursor()
 
