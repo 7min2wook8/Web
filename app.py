@@ -76,13 +76,10 @@ except Exception as e:
 
 
 
-api_key= os.getenv("api_key")
+
 
 # 연결이 성공했으면 커서 생성
 cursor = db.cursor()
-
-openai.api_key = api_key
-
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -203,8 +200,8 @@ def dashboard():
 # 추가 쿼리 insert into mydb.memberinfo (id,pw,name) values ("7min2wook8@naver.com","qweasd456" ,"parminwook")
 
 ##############################################################################################
-api_key="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"
-openai.api_key = api_key
+openai_api_key= os.getenv("api_key")
+openai.api_key = openai_api_key
 
 @app.route('/ask', methods=['POST'])
 def ask():
