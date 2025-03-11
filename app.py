@@ -400,5 +400,24 @@ def home():
 def serviceLogin():    
     return render_template('profile.html')  # Flask가 HTML을 렌더링
 
+
+
+@app.route('/add_user')
+def add_user():
+    new_user = User(name="Alice")
+    db.session.add(new_user)
+    db.session.commit()
+    return "User added!"
+
+@app.route('/users')
+def get_users():
+    users = User.query.all()
+    return {"users": [user.name for user in users]}
+
+
+
+# if __name__ == '__main__':
+#     app.run('0.0.0.0',debug=False, port=5000)
+
 if __name__ == '__main__':
-    app.run('0.0.0.0',debug=False, port=5000)
+    app.run(debug=True)
