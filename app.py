@@ -147,54 +147,40 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=1)  # 1시간 유지
 Session(app)
 
 
-# try:
-#     db = pymysql.connect(
-#         host='localhost',
-#         user='root',
-#         passwd='qweasd456',
-#         database='myDB',
-#         charset='utf8'
-#     )
-#     print("연결완료")
-# except Exception as e:
-#     print(e)
 
-# 연결이 성공했으면 커서 생성
-#cursor = db.cursor()
 
-# @app.route("/register", methods=["POST"])
-# def register():
-#     data = request.json
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.json
 
-#     if not data:
-#         print("잘못된 요청")
-#         return jsonify({"response": "잘못된 요청"}), 400  # 반드시 return 필요!
+    if not data:
+        print("잘못된 요청")
+        return jsonify({"response": "잘못된 요청"}), 400  # 반드시 return 필요!
     
-#     if request.method == "POST":
+    if request.method == "POST":
         
-#         user_Name = data.get('inputName')
-#         user_Pw = data.get('inputPw')
-#         user_Email = data.get('inputEmail')
+        user_Name = data.get('inputName')
+        user_Pw = data.get('inputPw')
+        user_Email = data.get('inputEmail')
         
-#         # #비밀번호를 DB에 저장할때 변환해서 저장
-#         hashed_password = bcrypt.generate_password_hash(user_Pw).decode("utf-8")
+        # #비밀번호를 DB에 저장할때 변환해서 저장
+        hashed_password = bcrypt.generate_password_hash(user_Pw).decode("utf-8")
         
-#         try:
-            
-#             cursor.execute("insert into mydb.memberinfo (id, pw, name) values (%s, %s, %s)", (user_Email, hashed_password, user_Name))
-#             db.commit()
-#             print('회원가입 실패1')
-#             return jsonify({"status": "success", "message": "register succes", "redirect": "/"}), 200
+        print("user_Name : " + user_Name)
+        print("hashed_password : " + hashed_password)
+        print("user_Email : " + user_Email)
+
+
+        return jsonify({"status": "success", 
+                        "message": "register succes", 
+                        "redirect": "/"}), 200
+
 
         
-#         except pymysql.err.IntegrityError:
+    else:
+        print('회원가입 실패2')
+        return jsonify({"status": "fail","message": "register fail2, method not post"})
 
-#             print("이미 존재하는 아이디이거나 쿼리 오류입니다.")
-#             return jsonify({"status": "fail","message": "register fail1"})
-        
-#     else:
-#         print('회원가입 실패2')
-#         return jsonify({"status": "fail","message": "register fail2, method not post"})
 
 
 # # 📌 로그인
