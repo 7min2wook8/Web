@@ -1,11 +1,14 @@
 flask
 flask_cors
+flask_sqlalchemy
+psycopg2-binary
+gunicorn
+
 authlib
 openai
-pymysql
+
 flask_bcrypt
 flask_session
 python-dotenv
 werkzeug
 requests
-gunicorn
