@@ -4,3 +4,4 @@ flask_cors
 authlib
 requests
 openai
+pymysql
