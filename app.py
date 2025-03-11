@@ -469,4 +469,4 @@ def serviceLogin():
 #     app.run('0.0.0.0',debug=False, port=5000)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
