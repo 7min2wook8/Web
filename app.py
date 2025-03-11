@@ -3,7 +3,7 @@ from flask import Flask, send_from_directory
 #flask 서버 임포
 from flask import Flask, render_template, redirect, url_for, session, request, jsonify
 from flask_cors import CORS  # CORS 추가
-
+from flask_sqlalchemy import SQLAlchemy
 #시간관련 임포
 from datetime import timedelta
 
@@ -16,7 +16,7 @@ import openai
 
 
 #mysql연동
-import pymysql
+#import pymysql
 from flask_bcrypt import Bcrypt
 from flask_session import Session
 
@@ -38,6 +38,25 @@ load_dotenv()
 conn  = None
 
 app = Flask(__name__)
+
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://mydatabase_p7ae_user:fvCc4VdMYTjeXnO7jPBpI5WnnkxryDRs@dpg-cv7pgv5ds78s73cotta0-a/mydatabase_p7ae")
+
+# SQLAlchemy 설정
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db = SQLAlchemy(app)
+
+# 예제 테이블 모델
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+
+# 데이터베이스 테이블 생성
+with app.app_context():
+    db.create_all()
+
+
+
 app.secret_key = "qweasd456"  # 세션 암호화를 위한 SECRET_KEY 설정
 bcrypt = Bcrypt(app)
 
@@ -63,118 +82,118 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=1)  # 1시간 유지
 Session(app)
 
 
-try:
-    db = pymysql.connect(
-        host='localhost',
-        user='root',
-        passwd='qweasd456',
-        database='myDB',
-        charset='utf8'
-    )
-    print("연결완료")
-except Exception as e:
-    print(e)
+# try:
+#     db = pymysql.connect(
+#         host='localhost',
+#         user='root',
+#         passwd='qweasd456',
+#         database='myDB',
+#         charset='utf8'
+#     )
+#     print("연결완료")
+# except Exception as e:
+#     print(e)
 
 # 연결이 성공했으면 커서 생성
-cursor = db.cursor()
+#cursor = db.cursor()
 
-@app.route("/register", methods=["POST"])
-def register():
-    data = request.json
+# @app.route("/register", methods=["POST"])
+# def register():
+#     data = request.json
 
-    if not data:
-        print("잘못된 요청")
-        return jsonify({"response": "잘못된 요청"}), 400  # 반드시 return 필요!
+#     if not data:
+#         print("잘못된 요청")
+#         return jsonify({"response": "잘못된 요청"}), 400  # 반드시 return 필요!
     
-    if request.method == "POST":
+#     if request.method == "POST":
         
-        user_Name = data.get('inputName')
-        user_Pw = data.get('inputPw')
-        user_Email = data.get('inputEmail')
+#         user_Name = data.get('inputName')
+#         user_Pw = data.get('inputPw')
+#         user_Email = data.get('inputEmail')
         
-        # #비밀번호를 DB에 저장할때 변환해서 저장
-        hashed_password = bcrypt.generate_password_hash(user_Pw).decode("utf-8")
+#         # #비밀번호를 DB에 저장할때 변환해서 저장
+#         hashed_password = bcrypt.generate_password_hash(user_Pw).decode("utf-8")
         
-        try:
+#         try:
             
-            cursor.execute("insert into mydb.memberinfo (id, pw, name) values (%s, %s, %s)", (user_Email, hashed_password, user_Name))
-            db.commit()
-            print('회원가입 실패1')
-            return jsonify({"status": "success", "message": "register succes", "redirect": "/"}), 200
+#             cursor.execute("insert into mydb.memberinfo (id, pw, name) values (%s, %s, %s)", (user_Email, hashed_password, user_Name))
+#             db.commit()
+#             print('회원가입 실패1')
+#             return jsonify({"status": "success", "message": "register succes", "redirect": "/"}), 200
 
         
-        except pymysql.err.IntegrityError:
+#         except pymysql.err.IntegrityError:
 
-            print("이미 존재하는 아이디이거나 쿼리 오류입니다.")
-            return jsonify({"status": "fail","message": "register fail1"})
+#             print("이미 존재하는 아이디이거나 쿼리 오류입니다.")
+#             return jsonify({"status": "fail","message": "register fail1"})
         
-    else:
-        print('회원가입 실패2')
-        return jsonify({"status": "fail","message": "register fail2, method not post"})
+#     else:
+#         print('회원가입 실패2')
+#         return jsonify({"status": "fail","message": "register fail2, method not post"})
 
 
-# 📌 로그인
-@app.route("/login", methods=["POST"])
-def login():
-    print('로그인')
+# # 📌 로그인
+# @app.route("/login", methods=["POST"])
+# def login():
+#     print('로그인')
 
-    data = request.json
+#     data = request.json
 
-    if not data:
-        print("잘못된 요청")
-        return jsonify({"response": "잘못된 요청"}), 400  # 반드시 return 필요!
+#     if not data:
+#         print("잘못된 요청")
+#         return jsonify({"response": "잘못된 요청"}), 400  # 반드시 return 필요!
     
-    print("받은 데이터:", data)  # JSON 데이터 확인
+#     print("받은 데이터:", data)  # JSON 데이터 확인
 
-    if request.method == "POST":
+#     if request.method == "POST":
 
-        user_Email = data.get('inputEmail')
+#         user_Email = data.get('inputEmail')
         
-        user_Pw = data.get('inputPw')
+#         user_Pw = data.get('inputPw')
 
         
-        # #임시 입력
-        # if user_Email == '':
-        #     user_Email = "7min2wook8@naver.com"
+#         # #임시 입력
+#         # if user_Email == '':
+#         #     user_Email = "7min2wook8@naver.com"
 
-        # if user_Pw == '':
-        #     user_Pw = "qweasd456"
-        # session["user"] = user_Email
-        # return jsonify({"status": "success", "message": "login succes", "redirect": "/"}), 200
-        try:
-            cursor.execute("select ID,PW,name from mydb.memberinfo where ID = %s", (user_Email,))
-            user = cursor.fetchone()
+#         # if user_Pw == '':
+#         #     user_Pw = "qweasd456"
+#         # session["user"] = user_Email
+#         # return jsonify({"status": "success", "message": "login succes", "redirect": "/"}), 200
+#         try:
+#             cursor.execute("select ID,PW,name from mydb.memberinfo where ID = %s", (user_Email,))
+#             user = cursor.fetchone()
 
-            if user and bcrypt.check_password_hash(user[1], user_Pw):
-                session["user"] = user_Email
-                print('로그인 성공')
-                return jsonify({"status": "success", "message": "login succes", "redirect": "/"}), 200
+#             if user and bcrypt.check_password_hash(user[1], user_Pw):
+#                 session["user"] = user_Email
+#                 print('로그인 성공')
+#                 return jsonify({"status": "success", "message": "login succes", "redirect": "/"}), 200
         
-            else:
-                print('로그인 실패1')
-                return jsonify({"status": "fail", "message": "Invalid email or password"}),401
+#             else:
+#                 print('로그인 실패1')
+#                 return jsonify({"status": "fail", "message": "Invalid email or password"}),401
             
-        except Exception as e:
-            print(f"❌ 서버 오류 발생: {e}")
-            return jsonify({"status": "error", "message": "Internal Server Error"}), 500
+#         except Exception as e:
+#             print(f"❌ 서버 오류 발생: {e}")
+#             return jsonify({"status": "error", "message": "Internal Server Error"}), 500
     
-    else:
-        print('로그인 실패2')
-        return jsonify({"status": "fail", "message": "fail , server check please"}),402
+#     else:
+#         print('로그인 실패2')
+#         return jsonify({"status": "fail", "message": "fail , server check please"}),402
 
 
 
 
-# 로그아웃
-@app.route("/logout")
-def logout():
+# # 로그아웃
+# @app.route("/logout")
+# def logout():
     
-    if "user" not in session:
-        print('로그인 안되어있음')
-        return redirect("/")  # 로그인 안 되어 있으면 로그인 페이지로 이동
+#     if "user" not in session:
+#         print('로그인 안되어있음')
+#         return redirect("/")  # 로그인 안 되어 있으면 로그인 페이지로 이동
     
-    session.pop("user", None)
-    return redirect("/")
+#     session.pop("user", None)
+#     return redirect("/")
 
 
 # @app.route('/logout')
