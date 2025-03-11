@@ -14,6 +14,7 @@ from authlib.integrations.flask_client import OAuth
 #오픈ai 정보 임포트
 import openai
 
+import psycopg2
 
 #mysql연동
 #import pymysql
