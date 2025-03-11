@@ -57,6 +57,17 @@ with app.app_context():
     db.create_all()
 
 
+class Users(db.Model):
+    id = db.Column(db.Integer, primary_key=True)   # 기본키
+    name = db.Column(db.String(50), nullable=False)  # 이름 (NOT NULL)
+    email = db.Column(db.String(50), nullable=False)  # 이름 (NOT NULL)
+
+
+# 데이터베이스 테이블 생성
+with app.app_context():
+    db.create_all()
+
+
 
 
 @app.route('/add_user/<name>')
@@ -166,10 +177,22 @@ def register():
         # #비밀번호를 DB에 저장할때 변환해서 저장
         hashed_password = bcrypt.generate_password_hash(user_Pw).decode("utf-8")
         
-        print("user_Name : " + user_Name)
-        print("hashed_password : " + hashed_password)
-        print("user_Email : " + user_Email)
+       
 
+        try :
+            print("user_Name : " + user_Name)
+            print("hashed_password : " + hashed_password)
+            print("user_Email : " + user_Email)
+            # new_user = User(name=name)
+            # db.session.add(new_user)
+            # db.session.commit()
+
+        except Exception as e:
+            return jsonify({"status": "fail","message": "register fail2, method not post"})
+        
+
+        
+        
 
         return jsonify({"status": "success", 
                         "message": "register succes", 
