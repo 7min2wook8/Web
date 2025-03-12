@@ -81,7 +81,7 @@ def create_table():
     except :
         print("***********************create table fail**********************")
     
-
+create_table()
 
 app.secret_key = "qweasd456"  # 세션 암호화를 위한 SECRET_KEY 설정
 bcrypt = Bcrypt(app)
