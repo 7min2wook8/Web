@@ -130,14 +130,14 @@ def register():
        
 
         try :
-            print("user_Name : " + user_Name)
-            print("hashed_password : " + hashed_password)
-            print("user_Email : " + user_Email)
+            # print("user_Name : " + user_Name)
+            # print("hashed_password : " + hashed_password)
+            # print("user_Email : " + user_Email)
 
               
             conn = get_db_connection()
             cur = conn.cursor()
-            
+
             cur.execute("INSERT INTO Members (email, name, Password ) "
             "VALUES (%s, %s, %s);", 
             (user_Email,user_Name, hashed_password))
@@ -146,7 +146,7 @@ def register():
             conn.commit()
             cur.close()
             conn.close()
-            print("***********************create table success**********************")
+            print("***********************INSERT success**********************")
             return jsonify({"status": "success", "message": "register succes", "redirect": "/"}), 200
         
         except Exception as e:
@@ -159,68 +159,85 @@ def register():
 
 
 
-# # 📌 로그인
-# @app.route("/login", methods=["POST"])
-# def login():
-#     print('로그인')
+# 📌 로그인
+@app.route("/login", methods=["POST"])
+def login():
+    print('로그인')
 
-#     data = request.json
+    data = request.json
 
-#     if not data:
-#         print("잘못된 요청")
-#         return jsonify({"response": "잘못된 요청"}), 400  # 반드시 return 필요!
+    if not data:
+        print("잘못된 요청")
+        return jsonify({"response": "잘못된 요청"}), 400  # 반드시 return 필요!
     
-#     print("받은 데이터:", data)  # JSON 데이터 확인
+    print("받은 데이터:", data)  # JSON 데이터 확인
 
-#     if request.method == "POST":
+    if request.method == "POST":
 
-#         user_Email = data.get('inputEmail')
+        user_Email = data.get('inputEmail')
         
-#         user_Pw = data.get('inputPw')
+        user_Pw = data.get('inputPw')
 
         
-#         # #임시 입력
-#         # if user_Email == '':
-#         #     user_Email = "7min2wook8@naver.com"
+        # #임시 입력
+        # if user_Email == '':
+        #     user_Email = "7min2wook8@naver.com"
 
-#         # if user_Pw == '':
-#         #     user_Pw = "qweasd456"
-#         # session["user"] = user_Email
-#         # return jsonify({"status": "success", "message": "login succes", "redirect": "/"}), 200
-#         try:
-#             cursor.execute("select ID,PW,name from mydb.memberinfo where ID = %s", (user_Email,))
-#             user = cursor.fetchone()
-
-#             if user and bcrypt.check_password_hash(user[1], user_Pw):
-#                 session["user"] = user_Email
-#                 print('로그인 성공')
-#                 return jsonify({"status": "success", "message": "login succes", "redirect": "/"}), 200
+        # if user_Pw == '':
+        #     user_Pw = "qweasd456"
+        # session["user"] = user_Email
+        # return jsonify({"status": "success", "message": "login succes", "redirect": "/"}), 200
         
-#             else:
-#                 print('로그인 실패1')
-#                 return jsonify({"status": "fail", "message": "Invalid email or password"}),401
+        try:
+            conn = get_db_connection()
+            cur = conn.cursor()
+
+            cur.execute("select email, Password "
+            "from Members "
+            "where email = %s;", (user_Email))
+            user = cur.fetchone()   # 하나의 데이터 가져오기
+                #cur.fetchall()     #모든 데이터 가져오기
+                #cur.fetchmany(3)   #3개 가져오기
+            conn.commit()
+            cur.close()
+            conn.close()
+            print("***********************select success**********************")
+        
+
+            #cursor.execute("select ID,PW,name from mydb.memberinfo where ID = %s", (user_Email,))
+            #user = cur.fetchone()
+            #비밀번호 비교
+            if user and bcrypt.check_password_hash(user[1], user_Pw):
+                session["user"] = user_Email
+                print('로그인 성공')
+                return jsonify({"status": "success", "message": "login success", "redirect": "/"}), 200
+        
+            else:
+                print('로그인 실패1')
+                return jsonify({"status": "fail", "message": "Invalid email or password"}),401
             
-#         except Exception as e:
-#             print(f"❌ 서버 오류 발생: {e}")
-#             return jsonify({"status": "error", "message": "Internal Server Error"}), 500
+        except Exception as e:
+            print(f"❌ 서버 오류 발생: {e}")
+            return jsonify({"status": "error", "message": "Internal Server Error"}), 500
     
-#     else:
-#         print('로그인 실패2')
-#         return jsonify({"status": "fail", "message": "fail , server check please"}),402
+    else:
+        print('로그인 실패2')
+        return jsonify({"status": "fail", "message": "fail , server check please"}),402
 
 
 
 
-# # 로그아웃
-# @app.route("/logout")
-# def logout():
+# 로그아웃
+@app.route("/logout")
+def logout():
     
-#     if "user" not in session:
-#         print('로그인 안되어있음')
-#         return redirect("/")  # 로그인 안 되어 있으면 로그인 페이지로 이동
+    if "user" not in session:
+        print('로그인 안되어있음')
+        return jsonify({"status": "fail", "message": "not login"}), 200        
     
-#     session.pop("user", None)
-#     return redirect("/")
+    session.pop("user", None)
+    return jsonify({"status": "success", "message": "success logout", "redirect": "/"}), 200
+    return redirect("/")
 
 
 # @app.route('/logout')

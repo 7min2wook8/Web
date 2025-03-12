@@ -1,0 +1,71 @@
+
+.sidebar{
+
+    width: 250px;
+
+    /*vh 뷰포트의 너비값과 높이값*/
+    height: 100vh;
+    background-color: rgba(131, 122, 122, 0.2);
+    color: rgb(0, 0, 0);
+    transition: 0.3s ease;
+    overflow: hidden;
+    padding: 20px 0px;
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 900;
+
+  }
+
+
+   /* 사이드바 접혔을 때 스타일 */
+  .sidebar.collapsed {
+    width: 0px;
+        
+  }
+
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .sidebar ul li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .sidebar ul li:hover {
+    background-color: #b6b6b6;
+  }
+
+  .sidebar ul li i {
+    width: 24px;
+    margin-right: 10px;
+  }
+
+  .sidebar.collapsed ul li span {
+    display: none;
+  }
+
+
+  
+  /* ===== 사이드바 접힐 때 상단바 확장 ===== */
+  .sidebar.collapsed ~ .topbar {
+    left: 0px;
+    width: 100%;
+  }
+
+  .sidebar.collapsed ~ .content {
+    
+    
+    width: 100%;
+    
+  }
+
+  .sidebar.collapsed + .toggle-btn {
+      left: 70px;
+  }

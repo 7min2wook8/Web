@@ -7,9 +7,16 @@
 </head>
 <body>
   index.html입니다.
+  
   <script>
-    
-  window.location.href = "/welcom";
+    const response = await fetch('/welcom', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: formData
+          });
+
   </script>
 </body>
 </html>
