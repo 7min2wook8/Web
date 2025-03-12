@@ -3,7 +3,10 @@ from flask import Flask, send_from_directory
 #flask 서버 임포
 from flask import Flask, render_template, redirect, url_for, session, request, jsonify
 from flask_cors import CORS  # CORS 추가
-from flask_sqlalchemy import SQLAlchemy
+
+#ORM을 사용하게 되면 따로 SQL문을 작성할 필요없이 객체를 통해 간접적으로 데이터베이스를 조작
+#from flask_sqlalchemy import SQLAlchemy
+
 #시간관련 임포
 from datetime import timedelta
 
@@ -36,101 +39,48 @@ import os
 # .env 파일 활성화
 load_dotenv()
 
-conn  = None
-
 app = Flask(__name__)
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://mydatabase_p7ae_user:fvCc4VdMYTjeXnO7jPBpI5WnnkxryDRs@dpg-cv7pgv5ds78s73cotta0-a/mydatabase_p7ae")
-
-# SQLAlchemy 설정
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
-
-# 예제 테이블 모델
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)   # 기본키
-    name = db.Column(db.String(50), nullable=False)  # 이름 (NOT NULL)
-
-# 데이터베이스 테이블 생성
-with app.app_context():
-    db.create_all()
-
-
-class Users(db.Model):
-    id = db.Column(db.Integer, primary_key=True)   # 기본키
-    name = db.Column(db.String(50), nullable=False)  # 이름 (NOT NULL)
-    email = db.Column(db.String(50), nullable=False)  # 이름 (NOT NULL)
-
-
-# 데이터베이스 테이블 생성
-with app.app_context():
-    db.create_all()
+# PostgreSQL 연결 설정
+DB_HOST = "dpg-cv7pgv5ds78s73cotta0-a"
+DB_NAME = "mydatabase_p7ae"
+DB_USER = "mydatabase_p7ae_user"
+DB_PASS = "fvCc4VdMYTjeXnO7jPBpI5WnnkxryDRs"
+DB_PORT = "5432"  # 기본 포트
 
 
 
+# 데이터베이스 연결 함수
+def get_db_connection():
+    return psycopg2.connect(
+        host=DB_HOST,
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASS,
+        port=DB_PORT
+    )
 
-@app.route('/add_user/<name>')
-def add_user(name):
-    new_user = User(name=name)
-    db.session.add(new_user)
-    db.session.commit()
-    return f"User {name} added!"
-
-@app.route('/users')
-def get_users():
-    users = User.query.all()
-    return {"users": [user.name for user in users]}
-
-
-@app.route("/user/<int:user_id>")
-def get_user(user_id):
-    user = User.query.get(user_id)  # 특정 ID 조회 (SELECT * FROM users WHERE id=user_id)
-    if user:
-        return {"id": user.id, "name": user.name}
-    return "User not found", 404
-
-
-@app.route("/update_user/<int:user_id>/<new_name>")
-def update_user(user_id, new_name):
-    user = User.query.get(user_id)  # 특정 ID 조회
-    if user:
-        user.name = new_name  # 데이터 변경
-        db.session.commit()  # 변경 사항 저장 (UPDATE 실행)
-        return f"User {user_id} updated to {new_name}!"
-    return "User not found", 404
-
-
-@app.route("/delete_user/<int:user_id>")
-def delete_user(user_id):
-    user = User.query.get(user_id)  # 특정 ID 조회
-    if user:
-        db.session.delete(user)  # 삭제
-        db.session.commit()  # 변경 사항 저장 (DELETE 실행)
-        return f"User {user_id} deleted!"
-    return "User not found", 404
-
-
-
-@app.route("/drop_table")
-def drop_table():
-    db.drop_all()  # 모든 테이블 삭제 (DROP TABLE 실행)
-    return "All tables dropped!"
-
-
-
-@app.route("/search/<name>")
-def search_user(name):
-    users = User.query.filter_by(name=name).all()  # 특정 이름을 가진 사용자 조회
-    return {"users": [user.id for user in users]}
-
-
-@app.route("/search_advanced/<name>/<int:user_id>")
-def search_advanced(name, user_id):
-    users = User.query.filter((User.name == name) | (User.id == user_id)).all()
-    return {"users": [user.id for user in users]}
-
-
+def create_table():
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        #CREATE TABLE IF NOT EXISTS 테이블이 없다면 생성해라
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS Members (
+                SERIAL_id SERIAL PRIMARY KEY,
+                email TEXT NOT NULL,            
+                name TEXT NOT NULL,
+                Password TEXT NOT NULL
+            );
+        """)
+        
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("***********************create table success**********************")
+    except :
+        print("***********************create table fail**********************")
+    
 
 
 app.secret_key = "qweasd456"  # 세션 암호화를 위한 SECRET_KEY 설정
@@ -183,9 +133,6 @@ def register():
             print("user_Name : " + user_Name)
             print("hashed_password : " + hashed_password)
             print("user_Email : " + user_Email)
-            # new_user = User(name=name)
-            # db.session.add(new_user)
-            # db.session.commit()
 
         except Exception as e:
             return jsonify({"status": "fail","message": "register fail2, method not post"})
