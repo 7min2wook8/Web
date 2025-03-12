@@ -134,18 +134,24 @@ def register():
             print("hashed_password : " + hashed_password)
             print("user_Email : " + user_Email)
 
+              
+            conn = get_db_connection()
+            cur = conn.cursor()
+            
+            cur.execute("INSERT INTO Members (email, name, Password ) "
+            "VALUES (%s, %s, %s);", 
+            (user_Email,user_Name, hashed_password))
+
+
+            conn.commit()
+            cur.close()
+            conn.close()
+            print("***********************create table success**********************")
+            return jsonify({"status": "success", "message": "register succes", "redirect": "/"}), 200
+        
         except Exception as e:
             return jsonify({"status": "fail","message": "register fail2, method not post"})
         
-
-        
-        
-
-        return jsonify({"status": "success", 
-                        "message": "register succes", 
-                        "redirect": "/"}), 200
-
-
         
     else:
         print('회원가입 실패2')
