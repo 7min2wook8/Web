@@ -237,8 +237,6 @@ def logout():
     
     session.pop("user", None)
     return jsonify({"status": "success", "message": "success logout", "redirect": "/"}), 200
-    return redirect("/")
-
 
 # @app.route('/logout')
 # def logout():
