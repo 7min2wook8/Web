@@ -118,7 +118,7 @@
     
     width: 50%;
     margin-left: 0;
-    
+
 }
 
 
@@ -149,11 +149,24 @@
 
 /*3번 content **********************************************************/
 
-
-.content_3content_top p:first-child{
+.content_top p:first-child{
    
     color:  #4181ff;
 }
+
+
+.content_main_container{
+    display: grid;
+    gap : 16px;
+
+    grid-template-columns: 200px 200px 500px;
+}
+
+.content_item{
+
+}
+
+
 
 
 

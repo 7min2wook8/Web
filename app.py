@@ -455,4 +455,4 @@ def videos(videoName):
 #     app.run('0.0.0.0',debug=False, port=5000)
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
