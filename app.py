@@ -1,7 +1,7 @@
 from flask import Flask, send_from_directory
 
 #flask 서버 임포
-from flask import Flask, render_template, redirect, url_for, session, request, jsonify
+from flask import Flask, send_file, render_template, redirect, url_for, session, request, jsonify
 from flask_cors import CORS  # CORS 추가
 
 #ORM을 사용하게 되면 따로 SQL문을 작성할 필요없이 객체를 통해 간접적으로 데이터베이스를 조작
@@ -441,6 +441,15 @@ def home():
 @app.route('/serviceLogin')
 def serviceLogin():    
     return render_template('profile.html')  # Flask가 HTML을 렌더링
+
+
+#vide 태그에서 영상 불러올때 사용
+@app.route('/videos/<string:videoName>')
+def videos(videoName):
+    response = send_from_directory('static/videos', videoName)
+    response.headers['Cache-Control'] = 'public, max-age=86400'  # 1일 동안 캐시 유지
+    return response
+
 
 # if __name__ == '__main__':
 #     app.run('0.0.0.0',debug=False, port=5000)
