@@ -14,7 +14,7 @@ async function checkSession() {
     else
         return false;
     }
-
+alert("실행확인");
 
 document.addEventListener("DOMContentLoaded", () =>{
 
@@ -23,7 +23,6 @@ document.addEventListener("DOMContentLoaded", () =>{
     //로그인 정보 확인 후 오른쪽 상단 버튼 숨김 보임 표시
     if (checkSession()) {
 
-        
         notLogin.classList.add("hide");
         onLogin.classList.remove("hide");
         
