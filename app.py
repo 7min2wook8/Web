@@ -213,7 +213,7 @@ def login():
                 return jsonify({"status": "success", "message": "login success", "redirect": "/"}), 200
         
             else:
-                print('로그인 실패1')
+                print('회원가입 안함 실패1')
                 return jsonify({"status": "fail", "message": "Invalid email or password"}),401
             
         except Exception as e:

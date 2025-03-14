@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/static/CSS/base.css">
 <link rel="stylesheet" href="/static/CSS/header.css">
 
 <div id="topbar" class="topbar">
@@ -16,11 +17,15 @@
         </div>
     </div>
     <div id="topbar_right" class="topbar_right">
-        <ul>
+        <ul class="notLogin">
             <li><a href="/serviceLogin">로그인</a></li>
             <li><a href="/serviceLogin">회원가입</a></li>
-            <li><a href="/logout">로그아웃</a></li>
+        </ul>
+        <ul class="onLogin">            
             
+            <li><button type="button">버튼</button></li>
+            <li><a href="/logout">로그아웃</a></li>
+
         </ul>
     </div>
 </div>
