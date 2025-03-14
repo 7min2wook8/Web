@@ -247,8 +247,7 @@ def logout():
 #로그인 상태 유무 확인
 @app.route("/dashboard")
 def dashboard():
-    print("/dashboard 실행")
-    print(session)
+    
     if "user" in session:
         return jsonify({"status": "success"}), 200
     
