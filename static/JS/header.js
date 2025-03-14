@@ -14,12 +14,15 @@ async function checkSession() {
     else
         return false;
     }
-alert("실행확인");
+
 
 document.addEventListener("DOMContentLoaded", () =>{
 
-    let notLogin = document.querySelector(".notLogin");
-    let onLogin = document.querySelector(".onLogin");
+    let notLogin = document.getElementById("notLogin");
+    let onLogin = document.getElementById("onLogin");
+
+    console.log(notLogin)
+    console.log(onLogin)
     //로그인 정보 확인 후 오른쪽 상단 버튼 숨김 보임 표시
     if (checkSession()) {
 
