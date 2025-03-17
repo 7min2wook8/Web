@@ -17,12 +17,12 @@ async function checkSession() {
 
 
 window.onload = () =>{
-    
+
     let notLogin = document.querySelector(".notLogin");
     let onLogin = document.querySelector(".onLogin");
-
-    console.log(notLogin)
-    console.log(onLogin)
+    console.log("login 버튼들 찾아용");
+    console.log(notLogin);
+    console.log(onLogin);
     //로그인 정보 확인 후 오른쪽 상단 버튼 숨김 보임 표시
     if (checkSession()) {
 

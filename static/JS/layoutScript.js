@@ -12,4 +12,6 @@ async function loadComponent(id, url) {
 document.addEventListener("DOMContentLoaded", () => {
     loadComponent("header", "../static/header.html");
     loadComponent("footer", "../static/footer.html");
+
+    console.log("header footer 불러옴")
 });
