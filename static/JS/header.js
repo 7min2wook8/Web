@@ -18,8 +18,8 @@ async function checkSession() {
 
 document.addEventListener("DOMContentLoaded", () =>{
 
-    let notLogin = document.querySelector("notLogin");
-    let onLogin = document.querySelector("onLogin");
+    let notLogin = document.querySelector(".notLogin");
+    let onLogin = document.querySelector(".onLogin");
 
     console.log(notLogin)
     console.log(onLogin)
