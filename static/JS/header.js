@@ -16,8 +16,8 @@ async function checkSession() {
     }
 
 
-document.addEventListener("DOMContentLoaded", () =>{
-
+window.onload = () =>{
+    
     let notLogin = document.querySelector(".notLogin");
     let onLogin = document.querySelector(".onLogin");
 
@@ -35,6 +35,11 @@ document.addEventListener("DOMContentLoaded", () =>{
         notLogin.classList.remove("hide");
         
     }
+}
+
+document.addEventListener("DOMContentLoaded", () =>{
+
+   
 
 
 });
