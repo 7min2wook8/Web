@@ -14,11 +14,39 @@
 
     <link rel="stylesheet" href="../static/CSS/base.css">
     <link rel="stylesheet" href="../static/CSS/welcom.css">
+    <link rel="stylesheet" href="../static/CSS/header.css">
+
     
 </head>
 <body>
-    <!--기본 있어야함-->
-    <div id="header"></div>
+
+    <div id="topbar" class="topbar">
+        <div id="topbar_left" class="topbar_left">
+            <div id=".logo" class ="logo">
+                <a href="">Amolla</a>
+            </div>
+            <div id="topbar_left_menu" class="topbar_left_menu">
+                <ul>
+                    <li><a href="">서비스 소개</a></li>
+                    <li><a href="">유용한 기능</a></li>
+                    <li><a href="">비즈니스 문의</a></li>
+                    <li><a href="">자주 묻는 질문</a></li>
+                    <li><a href="">새로운 소식</a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="topbar_right" class="topbar_right">
+            <ul class="notLogin" id="notLogin">
+                <li><a href="/serviceLogin">로그인</a></li>
+                <li><a href="/serviceLogin">회원가입</a></li>
+            </ul>
+            <ul class="onLogin" id="onLogin">            
+                
+                <li><button type="button">버튼</button></li>
+                <li><a href="/logout">로그아웃</a></li>
+
+            </ul>
+        </div>
 
 
 
@@ -71,15 +99,8 @@
                     어떤 주제든 풍부하게 대화를 나눌 수 있는<br> 
                     새로운 차원의 탐색 서비스를 경험하세요.<br>
                 </p>
-            </div>
+            </div>          
 
-           
-            <!-- <video               
-                src="{{ url_for('static', filename='videos/0_Technology_Circuit Board_1920x1080.mp4') }}"
-                alt="" id="right_content_backimg" 
-                class="right_content_backimg" 
-                autoplay muted loop>
-            </video> -->
             <video               
                 src="/videos/0_Technology_Circuit Board_1920x1080.mp4"
                 alt="" id="right_content_backimg" 
@@ -145,8 +166,9 @@
 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
 crossorigin="anonymous">
     </script>
-    <script src="/static/JS/layoutScript.js"></script>
-    <script src="/static/JS/header.js"></script>
+
+
+    <script src="../static/JS/header.js"></script>
 
   
 </body>

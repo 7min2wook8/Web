@@ -8,10 +8,10 @@ async function loadComponent(id, url) {
     }
 }
 
+//위 함수 실행
 // 페이지 로드 시 실행
 document.addEventListener("DOMContentLoaded", () => {
     loadComponent("header", "../static/header.html");
     loadComponent("footer", "../static/footer.html");
 
-    console.log("header footer 불러옴")
 });
