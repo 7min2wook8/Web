@@ -26,13 +26,13 @@ window.onload = () =>{
     //로그인 정보 확인 후 오른쪽 상단 버튼 숨김 보임 표시
     if (checkSession()) {
 
-        notLogin.classList.add("hide");
-        onLogin.classList.remove("hide");
+        notLogin.classList.remove("hide");
+        onLogin.classList.add("hide");
         
     }
     else{
-        onLogin.classList.add("hide");
-        notLogin.classList.remove("hide");
+        onLogin.classList.remove("hide");
+        notLogin.classList.add("hide");
         
     }
 }
