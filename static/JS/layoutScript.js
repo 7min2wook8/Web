@@ -12,5 +12,5 @@ async function loadComponent(id, url) {
 document.addEventListener("DOMContentLoaded", () => {
     loadComponent("header", "../static/header.html");
     loadComponent("footer", "../static/footer.html");
-    loadComponent("headerjs", "../static/header.js");
+    loadComponent("headerjs", "../static/JS/header.js");
 });
