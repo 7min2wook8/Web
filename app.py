@@ -31,6 +31,9 @@ import uuid
 
 import requests
 
+#postreg .env에 있는 url 연동시 필요
+from flask_sqlalchemy import SQLAlchemy
+
 #api 키 불러오기
 from dotenv import load_dotenv
 #파일 업로드 다운로드 관련
@@ -41,24 +44,35 @@ load_dotenv()
 
 app = Flask(__name__)
 
+
+# 환경 구분 (로컬이면 로컬 DB, Render면 Render DB 사용)
+ENV = os.getenv("ENV", "development")  # 기본값: development
+DB_URL = os.getenv("RENDER_DATABASE_URL") if ENV == "production" else os.getenv("DATABASE_URL")
+
+
+# PostgreSQL 연결 함수
+def get_db_connection():
+    conn = psycopg2.connect(DB_URL)
+    return conn
+
 # PostgreSQL 연결 설정
-DB_HOST = "dpg-cv7pgv5ds78s73cotta0-a"
-DB_NAME = "mydatabase_p7ae"
-DB_USER = "mydatabase_p7ae_user"
-DB_PASS = "fvCc4VdMYTjeXnO7jPBpI5WnnkxryDRs"
-DB_PORT = "5432"  # 기본 포트
+# DB_HOST = "dpg-cv7pgv5ds78s73cotta0-a"
+# DB_NAME = "mydatabase_p7ae"
+# DB_USER = "mydatabase_p7ae_user"
+# DB_PASS = "fvCc4VdMYTjeXnO7jPBpI5WnnkxryDRs"
+# DB_PORT = "5432"  # 기본 포트
 
 
 
 # 데이터베이스 연결 함수
-def get_db_connection():
-    return psycopg2.connect(
-        host=DB_HOST,
-        database=DB_NAME,
-        user=DB_USER,
-        password=DB_PASS,
-        port=DB_PORT
-    )
+# def get_db_connection():
+#     return psycopg2.connect(
+#         host=DB_HOST,
+#         database=DB_NAME,
+#         user=DB_USER,
+#         password=DB_PASS,
+#         port=DB_PORT
+#     )
 
 def create_table():
     try:
@@ -130,11 +144,7 @@ def register():
        
 
         try :
-            # print("user_Name : " + user_Name)
-            # print("hashed_password : " + hashed_password)
-            # print("user_Email : " + user_Email)
-
-              
+            
             conn = get_db_connection()
             cur = conn.cursor()
 
