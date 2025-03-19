@@ -141,8 +141,6 @@ def register():
         # #비밀번호를 DB에 저장할때 변환해서 저장
         hashed_password = bcrypt.generate_password_hash(user_Pw).decode("utf-8")
         
-       
-
         try :
             
             conn = get_db_connection()
@@ -180,14 +178,13 @@ def login():
         print("잘못된 요청")
         return jsonify({"response": "잘못된 요청"}), 400  # 반드시 return 필요!
     
-    print("받은 데이터:", data)  # JSON 데이터 확인
+    
 
     if request.method == "POST":
 
         user_Email = data.get('inputEmail')
         
         user_Pw = data.get('inputPw')
-
         
         # #임시 입력
         # if user_Email == '':
@@ -202,9 +199,7 @@ def login():
             conn = get_db_connection()
             cur = conn.cursor()
 
-            cur.execute("select email, Password "
-            "from Members "
-            "where email = %s;", (user_Email))
+            cur.execute("select email, Password from Members where email = %s;", [user_Email])
             user = cur.fetchone()   # 하나의 데이터 가져오기
                 #cur.fetchall()     #모든 데이터 가져오기
                 #cur.fetchmany(3)   #3개 가져오기
@@ -212,10 +207,7 @@ def login():
             cur.close()
             conn.close()
             print("***********************select success**********************")
-        
 
-            #cursor.execute("select ID,PW,name from mydb.memberinfo where ID = %s", (user_Email,))
-            #user = cur.fetchone()
             #비밀번호 비교
             if user and bcrypt.check_password_hash(user[1], user_Pw):
                 session["user"] = user_Email
@@ -238,7 +230,7 @@ def login():
 
 
 # 로그아웃
-@app.route("/logout")
+@app.route("/logout", methods=["get"])
 def logout():
     
     if "user" not in session:

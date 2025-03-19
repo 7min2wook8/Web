@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그아웃</title>
+</head>
+<body>
+    
+    <script>
+
+    try {
+          
+          const response = await fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },            
+          });
+
+          const data = await response.json();
+          
+          if (data.status == "success") {
+            
+          window.location.href = data.redirect;  // 페이지 이동
+          }else
+          {
+            alert("data.status값 못받음");
+            window.location.href = "/welcom"
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+
+
+    </script>
+</body>
+</html>
