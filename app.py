@@ -230,15 +230,14 @@ def login():
 
 
 # 로그아웃
-@app.route("/logout", methods=["get"])
+@app.route("/logout", methods=["POST"])
 def logout():
-    
     if "user" not in session:
         print('로그인 안되어있음')
         return jsonify({"status": "fail", "message": "not login"}), 200        
     
     session.pop("user", None)
-    return jsonify({"status": "success", "message": "success logout", "redirect": "/"}), 200
+    return jsonify({"status": "success", "message": "success logout", "redirect": "/welcom"}), 200
 
 # @app.route('/logout')
 # def logout():
@@ -433,7 +432,6 @@ def auth_callback():
 def welcom():    
     return render_template('welcom.html')  # Flask가 HTML을 렌더링
 
-
 @app.route('/')
 def home():
     print("홈으로")
@@ -442,6 +440,10 @@ def home():
 @app.route('/serviceLogin')
 def serviceLogin():    
     return render_template('profile.html')  # Flask가 HTML을 렌더링
+
+@app.route('/serviceLogout')
+def serviceLogout():    
+    return render_template('logout.html')  # Flask가 HTML을 렌더링
 
 
 #vide 태그에서 영상 불러올때 사용
