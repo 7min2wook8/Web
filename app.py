@@ -47,8 +47,9 @@ app = Flask(__name__)
 
 # 환경 구분 (로컬이면 로컬 DB, Render면 Render DB 사용)
 ENV = os.getenv("ENV", "development")  # 기본값: development
-DB_URL = os.getenv("RENDER_DATABASE_URL") if ENV == "production" else os.getenv("DATABASE_URL")
-
+#DB_URL = os.getenv("RENDER_DATABASE_URL") if ENV == "production" else os.getenv("DATABASE_URL")
+# .env에 있어야 함
+DB_URL = os.environ.get("RENDER_DATABASE_URL") if ENV == "production" else os.getenv("DATABASE_URL")
 
 # PostgreSQL 연결 함수
 def get_db_connection():
@@ -72,9 +73,12 @@ def create_table():
         conn.commit()
         cur.close()
         conn.close()
-        print("***********************create table success**********************")
-    except :
+        print("***********************create table success**********************")  
+
+    except Exception as e:
         print("***********************create table fail**********************")
+        print("❌ create table fail")
+        print("Error:", e)
     
 create_table()
 
