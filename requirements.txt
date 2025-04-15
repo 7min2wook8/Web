@@ -12,3 +12,4 @@ flask_session
 python-dotenv
 werkzeug
 requests
+asyncpg
