@@ -55,25 +55,6 @@ def get_db_connection():
     conn = psycopg2.connect(DB_URL)
     return conn
 
-# PostgreSQL 연결 설정
-# DB_HOST = "dpg-cv7pgv5ds78s73cotta0-a"
-# DB_NAME = "mydatabase_p7ae"
-# DB_USER = "mydatabase_p7ae_user"
-# DB_PASS = "fvCc4VdMYTjeXnO7jPBpI5WnnkxryDRs"
-# DB_PORT = "5432"  # 기본 포트
-
-
-
-# 데이터베이스 연결 함수
-# def get_db_connection():
-#     return psycopg2.connect(
-#         host=DB_HOST,
-#         database=DB_NAME,
-#         user=DB_USER,
-#         password=DB_PASS,
-#         port=DB_PORT
-#     )
-
 def create_table():
     try:
         conn = get_db_connection()
@@ -178,22 +159,11 @@ def login():
         print("잘못된 요청")
         return jsonify({"response": "잘못된 요청"}), 400  # 반드시 return 필요!
     
-    
-
     if request.method == "POST":
 
         user_Email = data.get('inputEmail')
         
         user_Pw = data.get('inputPw')
-        
-        # #임시 입력
-        # if user_Email == '':
-        #     user_Email = "7min2wook8@naver.com"
-
-        # if user_Pw == '':
-        #     user_Pw = "qweasd456"
-        # session["user"] = user_Email
-        # return jsonify({"status": "success", "message": "login succes", "redirect": "/"}), 200
         
         try:
             conn = get_db_connection()
@@ -237,7 +207,7 @@ def logout():
         return jsonify({"status": "fail", "message": "not login"}), 200        
     
     session.pop("user", None)
-    return jsonify({"status": "success", "message": "success logout", "redirect": "/welcom"}), 200
+    return jsonify({"status": "success", "message": "success logout", "redirect": "/"}), 200
 
 # @app.route('/logout')
 # def logout():
@@ -250,10 +220,10 @@ def logout():
 def dashboard():
     
     if "user" in session:
+        print("success");
         return jsonify({"status": "success"}), 200
-    
+    print("fail");
     return jsonify({"status": "fail", "message": "Unauthorized access"})
-    return redirect("/")
 
 # 추가 쿼리 insert into mydb.memberinfo (id,pw,name) values ("7min2wook8@naver.com","qweasd456" ,"parminwook")
 

@@ -17,19 +17,16 @@
         </div>
     </div>
     <div id="topbar_right" class="topbar_right">
-        <ul class="notLogin" id="notLogin">
-            <li><a href="/serviceLogin">로그인</a></li>
-            <li><a href="/serviceLogin">회원가입</a></li>
+        <ul class="Login" id="Login">
+            <li><a href="/serviceLogin">로그인</a></li>                
         </ul>
-        <ul class="onLogin" id="onLogin">            
-                
+        <ul class="logout" id="logout">            
+            
             <li><a href="/">내 계정</a></li>
             <li><a href="/serviceLogout">로그아웃</a></li>
 
         </ul>
     </div>
-
-
-    <script src="{{ url_for('static', filename='JS/layoutScript.js') }}"></script>  
-    <script src="{{ url_for('static', filename='JS/header.js') }}"></script>
 </div>
+
+<script src="/static/JS/header.js"></script>

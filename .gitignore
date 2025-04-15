@@ -1,3 +1,4 @@
 .env
 env/
 local_app.py
+flask_session
