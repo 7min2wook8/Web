@@ -47,6 +47,7 @@ from sqlalchemy import text
 #from dotenv import load_dotenv
 from urllib.parse import urlparse
 from sqlalchemy.ext.asyncio import create_async_engine
+
 # .env 파일 활성화
 load_dotenv()
 
@@ -57,11 +58,19 @@ app = Flask(__name__)
 ENV = os.getenv("ENV", "development")  # 기본값: development
 #DB_URL = os.getenv("RENDER_DATABASE_URL") if ENV == "production" else os.getenv("DATABASE_URL")
 # .env에 있어야 함
-DB_URL = os.environ.get("DATABASE_URL") #if ENV == "production" else os.getenv("DATABASE_URL")
+DB_URL = os.environ.get("Neon_DATABASE_URL") #if ENV == "production" else os.getenv("DATABASE_URL")
 
 # PostgreSQL 연결 함수
 def get_db_connection():
-    conn = psycopg2.connect(DB_URL)
+    
+    try:
+        conn = psycopg2.connect(DB_URL)
+        #conn = await asyncpg.connect(DB_URL)
+        print("✅ 연결 성공!")
+
+    except Exception as e:
+        print("❌ 연결 실패:", e)
+
     return conn
 
 def create_table():
@@ -111,11 +120,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=1)  # 1시간 유지
 
-
 Session(app)
-
-
-
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -188,9 +193,8 @@ def login():
             conn.commit()
             cur.close()
             conn.close()
-            print("***********************select success**********************")
-
-            #비밀번호 비교
+ 
+             #비밀번호 비교
             if user and bcrypt.check_password_hash(user[1], user_Pw):
                 session["user"] = user_Email
                 print('로그인 성공')
@@ -232,9 +236,10 @@ def logout():
 def dashboard():
     
     if "user" in session:
-        print("success");
+        print("dashboard : success")
         return jsonify({"status": "success"}), 200
-    print("fail");
+    
+    print("dashboard : fail")
     return jsonify({"status": "fail", "message": "Unauthorized access"})
 
 # 추가 쿼리 insert into mydb.memberinfo (id,pw,name) values ("7min2wook8@naver.com","qweasd456" ,"parminwook")
@@ -436,6 +441,16 @@ def videos(videoName):
     return response
 
 
+import requests
+@app.route('/test-connection')
+def test_connection():
+    try:
+        response = requests.get("https://www.google.com", timeout=5)
+        return f"✅ 외부 연결 성공! 응답 코드: {response.status_code}"
+    except Exception as e:
+        return f"❌ 외부 연결 실패: {str(e)}"
+    
+    
 # if __name__ == '__main__':
 #     app.run('0.0.0.0',debug=False, port=5000)
 
