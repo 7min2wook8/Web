@@ -55,7 +55,7 @@ app = Flask(__name__)
 
 
 # 환경 구분 (로컬이면 로컬 DB, Render면 Render DB 사용)
-ENV = os.getenv("ENV", "development")  # 기본값: development
+#ENV = os.getenv("ENV", "development")  # 기본값: development
 #DB_URL = os.getenv("RENDER_DATABASE_URL") if ENV == "production" else os.getenv("DATABASE_URL")
 # .env에 있어야 함
 DB_URL = os.environ.get("Neon_DATABASE_URL") #if ENV == "production" else os.getenv("DATABASE_URL")
@@ -450,7 +450,7 @@ def test_connection():
     except Exception as e:
         return f"❌ 외부 연결 실패: {str(e)}"
     
-    
+
 # if __name__ == '__main__':
 #     app.run('0.0.0.0',debug=False, port=5000)
 
