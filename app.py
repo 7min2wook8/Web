@@ -73,11 +73,46 @@ def get_db_connection():
 
     return conn
 
+# CREATE TABLE Members (
+# 	Email	TEXT		NOT NULL,
+# 	name	TEXT		NOT NULL,
+# 	PW	TEXT		NOT NULL,
+# 	Member_SERIAL_id	SERIAL		NOT NULL
+# );
+
+# CREATE TABLE Contents (
+# 	Content_SERIAL_id2	SERIAL		NOT NULL,
+# 	Title	TEXT		NULL,
+# 	content	TEXT		NULL,
+# 	Email	TEXT		NOT NULL,
+# 	date	Date		NOT NULL
+# );
+
+# DROP TABLE comment;
+
+# CREATE TABLE comments (
+# 	comment_ID	SERIAL		NOT NULL,
+# 	Content_SERIAL_id2	SERIAL		NOT NULL,
+# 	comment	VARCHAR(255)		NULL,
+# 	Email	TEXT		NOT NULL,
+# 	date	date		NOT NULL 	
+# );
+
+
 def create_table():
     try:
         conn = get_db_connection()
         cur = conn.cursor()
         #CREATE TABLE IF NOT EXISTS 테이블이 없다면 생성해라
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS Members (
+                SERIAL_id SERIAL PRIMARY KEY,
+                email TEXT NOT NULL,            
+                name TEXT NOT NULL,
+                Password TEXT NOT NULL
+            );
+        """)
+
         cur.execute("""
             CREATE TABLE IF NOT EXISTS Members (
                 SERIAL_id SERIAL PRIMARY KEY,
@@ -223,6 +258,7 @@ def logout():
         return jsonify({"status": "fail", "message": "not login"}), 200        
     
     session.pop("user", None)
+    print('로그아웃')
     return jsonify({"status": "success", "message": "success logout", "redirect": "/"}), 200
 
 # @app.route('/logout')
@@ -239,7 +275,7 @@ def dashboard():
         print("dashboard : success")
         return jsonify({"status": "success"}), 200
     
-    print("dashboard : fail")
+    print("dashboard : not Login")
     return jsonify({"status": "fail", "message": "Unauthorized access"})
 
 # 추가 쿼리 insert into mydb.memberinfo (id,pw,name) values ("7min2wook8@naver.com","qweasd456" ,"parminwook")
@@ -415,9 +451,10 @@ def auth_callback():
 #####################################################################################################
 
 
-@app.route('/welcom')
-def welcom():    
-    return render_template('welcom.html')  # Flask가 HTML을 렌더링
+# @app.route('/welcom')
+# def welcom():    
+#     print("welcom 호출")
+#     return render_template('welcom.html')  # Flask가 HTML을 렌더링
 
 @app.route('/')
 def home():
@@ -425,13 +462,9 @@ def home():
     return render_template('index.html')  # Flask가 HTML을 렌더링
 
 @app.route('/serviceLogin')
-def serviceLogin():    
+def serviceLogin():
+    print("serviceLogin 호출")
     return render_template('profile.html')  # Flask가 HTML을 렌더링
-
-@app.route('/serviceLogout')
-def serviceLogout():    
-    return render_template('logout.html')  # Flask가 HTML을 렌더링
-
 
 #vide 태그에서 영상 불러올때 사용
 @app.route('/videos/<string:videoName>')

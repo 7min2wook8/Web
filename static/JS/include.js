@@ -1,3 +1,5 @@
+//header와 footer를 호출하고 그 안에 script를 실행함
+
 async function loadComponent(id, url) {
   const element = document.getElementById(id);
   if (element) {
@@ -32,4 +34,5 @@ async function loadComponent(id, url) {
 document.addEventListener("DOMContentLoaded", () => {
   loadComponent("header", "/static/header.html");
   loadComponent("footer", "/static/footer.html");
+
 });

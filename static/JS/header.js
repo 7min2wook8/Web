@@ -20,8 +20,38 @@ async function checkSession() {
     if(data.status == "success"){
         logout.classList.remove("hide");
     }
-    else
+    else{
         Login.classList.remove("hide");
+    }
+        
 }
 
 checkSession();
+
+document.getElementById("logoutbtn").addEventListener("click", async() => {
+
+    try {
+      
+        const response = await fetch('/logout', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },            
+        });
+  
+        const data = await response.json();
+        console.log(data.status)
+        if (data.status == "success") {
+          
+          window.location.href = data.redirect;  // 페이지 이동
+        }else
+        {
+          alert("data.status값 못받음");
+          window.location.href = "/welcom"
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+
+
+});

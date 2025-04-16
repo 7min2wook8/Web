@@ -1,13 +1,8 @@
-
-
 .content{
     position: relative;
     width: 100%;
     height:1000px;
     padding-top: 50px;
-    /* border: 1px solid black; */
-    /* overflow: hidden; */
-    
 }
 
 /*content 내 중앙에 영역 지정*/
@@ -22,6 +17,29 @@
     z-index: 900;
     
 }
+@media (min-width: 1280px) and (max-width: 1920px) {
+    .content{
+        width: 100%;
+        height: 1080px;
+    }
+}
+
+@media (min-width: 0) and (max-width: 1280px) {
+    .content{
+        width: 100%;
+        height: 720px;
+    }
+
+    .content_center{
+        width: 1280px;
+
+    }
+
+}
+
+
+
+
 
 
 /*폰트 디자인 지정*/
@@ -49,8 +67,8 @@
 }
 
 .content_backImg video{
-    width: 100%;
     height: 100%;
+    
 }
 
 .link_start_wrap{
