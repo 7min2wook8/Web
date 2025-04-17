@@ -1,3 +1,5 @@
+//profile.html 적용되는 JS
+
 const signUpButton = document.getElementById('signUp');
 const signInButton = document.getElementById('signIn');
 const container = document.getElementById('container');
