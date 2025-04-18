@@ -466,6 +466,12 @@ def serviceLogin():
     print("serviceLogin 호출")
     return render_template('profile.html')  # Flask가 HTML을 렌더링
 
+
+@app.route('/noticeBoard')
+def noticeBoard():
+    print("noticeBoard 호출")
+    return render_template('noticeBoard.html')  # Flask가 HTML을 렌더링
+
 #vide 태그에서 영상 불러올때 사용
 @app.route('/videos/<string:videoName>')
 def videos(videoName):
