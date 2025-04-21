@@ -11,9 +11,8 @@
     height: 50%;
     margin: auto;
     margin-top: 60px;
-    
 }
-
+/*오브젝트 중앙에 정렬 공식*/
 .centerPos{
     position: absolute;
     top: 50%;

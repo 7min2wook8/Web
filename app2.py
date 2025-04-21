@@ -17,8 +17,6 @@ from authlib.integrations.flask_client import OAuth
 #오픈ai 정보 임포트
 import openai
 
-import psycopg2
-
 #mysql연동
 #import pymysql
 from flask_bcrypt import Bcrypt
@@ -53,86 +51,37 @@ load_dotenv()
 
 app = Flask(__name__)
 
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("Neon_DATABASE_URL")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-# 환경 구분 (로컬이면 로컬 DB, Render면 Render DB 사용)
-#ENV = os.getenv("ENV", "development")  # 기본값: development
-#DB_URL = os.getenv("RENDER_DATABASE_URL") if ENV == "production" else os.getenv("DATABASE_URL")
-# .env에 있어야 함
-DB_URL = os.environ.get("Neon_DATABASE_URL") #if ENV == "production" else os.getenv("DATABASE_URL")
+#Contents 테이블 생성
+class Members(db.Model):
+    __tablename__ = 'Members'
 
-# PostgreSQL 연결 함수
-def get_db_connection():
+    SERIAL_id = db.Column(db.Integer, primary_key=True)
+    Email = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    Password = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
     
-    try:
-        conn = psycopg2.connect(DB_URL)
-        #conn = await asyncpg.connect(DB_URL)
-        print("✅ 연결 성공!")
+#Contents 테이블 생성
+class Contents(db.Model):
+    __tablename__ = 'Contents'
 
-    except Exception as e:
-        print("❌ 연결 실패:", e)
-
-    return conn
-
-# CREATE TABLE Members (
-# 	Email	TEXT		NOT NULL,
-# 	name	TEXT		NOT NULL,
-# 	PW	TEXT		NOT NULL,
-# 	Member_SERIAL_id	SERIAL		NOT NULL
-# );
-
-# CREATE TABLE Contents (
-# 	Content_SERIAL_id2	SERIAL		NOT NULL,
-# 	Title	TEXT		NULL,
-# 	content	TEXT		NULL,
-# 	Email	TEXT		NOT NULL,
-# 	date	Date		NOT NULL
-# );
-
-# DROP TABLE comment;
-
-# CREATE TABLE comments (
-# 	comment_ID	SERIAL		NOT NULL,
-# 	Content_SERIAL_id2	SERIAL		NOT NULL,
-# 	comment	VARCHAR(255)		NULL,
-# 	Email	TEXT		NOT NULL,
-# 	date	date		NOT NULL 	
-# );
+    Content_SERIAL_id2 = db.Column(db.Integer, primary_key=True)
+    Title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    Email = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    holseHead = db.Column(db.String(100), nullable=False)
+    viewCount = db.Column(db.Integer, nullable=False)
+    greatCount = db.Column(db.Integer, nullable=False)
 
 
-def create_table():
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        #CREATE TABLE IF NOT EXISTS 테이블이 없다면 생성해라
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS Members (
-                SERIAL_id SERIAL PRIMARY KEY,
-                email TEXT NOT NULL,            
-                name TEXT NOT NULL,
-                Password TEXT NOT NULL
-            );
-        """)
 
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS Contents (
-                SERIAL_id SERIAL PRIMARY KEY,
-                email TEXT NOT NULL,            
-                name TEXT NOT NULL,
-                Password TEXT NOT NULL
-            );
-        """)
-        
-        conn.commit()
-        cur.close()
-        conn.close()
-        print("***********************create table success**********************")  
-
-    except Exception as e:
-        print("***********************create table fail**********************")
-        print("❌ create table fail")
-        print("Error:", e)
-    
-create_table()
+with app.app_context():
+    db.create_all()
 
 app.secret_key = "qweasd456"  # 세션 암호화를 위한 SECRET_KEY 설정
 bcrypt = Bcrypt(app)
@@ -176,17 +125,10 @@ def register():
         
         try :
             
-            conn = get_db_connection()
-            cur = conn.cursor()
 
-            cur.execute("INSERT INTO Members (email, name, Password ) "
-            "VALUES (%s, %s, %s);", 
-            (user_Email,user_Name, hashed_password))
-
-
-            conn.commit()
-            cur.close()
-            conn.close()
+            new_user = User(email=user_Email, name=user_Name, password = hashed_password)
+            db.session.add(new_user)
+            db.session.commit()
             print("***********************INSERT success**********************")
             return jsonify({"status": "success", "message": "register succes", "redirect": "/"}), 200
         

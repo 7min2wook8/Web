@@ -1,0 +1,48 @@
+.content{
+
+    min-width: 1200px;
+
+}
+
+.noticeBoard_Category{
+    
+}
+
+.noticeBoard_Item{
+    display: grid;
+    gap : 16px;
+    grid-template-columns: 1fr 5fr 1fr 1fr 1fr 1fr;
+
+}
+
+.noticeBoard_Item{
+
+    position: relative;
+    padding: 12px 0px;
+}
+
+.noticeBoard_Item:first-child{
+
+    padding: 24px 0px;
+    
+}
+
+
+.noticeBoard_Item::before{
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    border-top: 1px solid #bbb;
+    content: "";
+}
+
+.noticeBoard_Item:last-child::after{
+
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    border-bottom: 1px solid  #bbb;
+    content: "";
+}
