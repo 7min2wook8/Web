@@ -17,8 +17,6 @@ from authlib.integrations.flask_client import OAuth
 #오픈ai 정보 임포트
 import openai
 
-import psycopg2
-
 #mysql연동
 #import pymysql
 from flask_bcrypt import Bcrypt
@@ -53,86 +51,48 @@ load_dotenv()
 
 app = Flask(__name__)
 
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("Neon_DATABASE_URL")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-# 환경 구분 (로컬이면 로컬 DB, Render면 Render DB 사용)
-#ENV = os.getenv("ENV", "development")  # 기본값: development
-#DB_URL = os.getenv("RENDER_DATABASE_URL") if ENV == "production" else os.getenv("DATABASE_URL")
-# .env에 있어야 함
-DB_URL = os.environ.get("Neon_DATABASE_URL") #if ENV == "production" else os.getenv("DATABASE_URL")
+#Contents 테이블 생성
+class Members(db.Model):
+    __tablename__ = 'Members'
 
-# PostgreSQL 연결 함수
-def get_db_connection():
+    SERIAL_id = db.Column(db.Integer, primary_key=True)
+    Email = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    Password = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
     
-    try:
-        conn = psycopg2.connect(DB_URL)
-        #conn = await asyncpg.connect(DB_URL)
-        print("✅ 연결 성공!")
+#Contents 테이블 생성
+class Contents(db.Model):
+    __tablename__ = 'Contents'
 
-    except Exception as e:
-        print("❌ 연결 실패:", e)
-
-    return conn
-
-# CREATE TABLE Members (
-# 	Email	TEXT		NOT NULL,
-# 	name	TEXT		NOT NULL,
-# 	PW	TEXT		NOT NULL,
-# 	Member_SERIAL_id	SERIAL		NOT NULL
-# );
-
-# CREATE TABLE Contents (
-# 	Content_SERIAL_id2	SERIAL		NOT NULL,
-# 	Title	TEXT		NULL,
-# 	content	TEXT		NULL,
-# 	Email	TEXT		NOT NULL,
-# 	date	Date		NOT NULL
-# );
-
-# DROP TABLE comment;
-
-# CREATE TABLE comments (
-# 	comment_ID	SERIAL		NOT NULL,
-# 	Content_SERIAL_id2	SERIAL		NOT NULL,
-# 	comment	VARCHAR(255)		NULL,
-# 	Email	TEXT		NOT NULL,
-# 	date	date		NOT NULL 	
-# );
+    Content_SERIAL_id2 = db.Column(db.Integer, primary_key=True)
+    Title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    Email = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    holseHead = db.Column(db.String(100), nullable=False)
+    viewCount = db.Column(db.Integer, nullable=False)
+    greatCount = db.Column(db.Integer, nullable=False)
 
 
-def create_table():
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        #CREATE TABLE IF NOT EXISTS 테이블이 없다면 생성해라
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS Members (
-                SERIAL_id SERIAL PRIMARY KEY,
-                email TEXT NOT NULL,            
-                name TEXT NOT NULL,
-                Password TEXT NOT NULL
-            );
-        """)
+    def to_dict(self):
+        return {
+            "Content_SERIAL_id2": self.Content_SERIAL_id2,
+            "Title": self.Title,
+            "content": self.content,
+            "Email": self.Email,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "holseHead": self.holseHead,
+            "viewCount": self.viewCount,
+            "greatCount": self.greatCount,
+        }
 
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS Contents (
-                SERIAL_id SERIAL PRIMARY KEY,
-                email TEXT NOT NULL,            
-                name TEXT NOT NULL,
-                Password TEXT NOT NULL
-            );
-        """)
-        
-        conn.commit()
-        cur.close()
-        conn.close()
-        print("***********************create table success**********************")  
-
-    except Exception as e:
-        print("***********************create table fail**********************")
-        print("❌ create table fail")
-        print("Error:", e)
-    
-create_table()
+with app.app_context():
+    db.create_all()
 
 app.secret_key = "qweasd456"  # 세션 암호화를 위한 SECRET_KEY 설정
 bcrypt = Bcrypt(app)
@@ -175,27 +135,23 @@ def register():
         hashed_password = bcrypt.generate_password_hash(user_Pw).decode("utf-8")
         
         try :
-            
-            conn = get_db_connection()
-            cur = conn.cursor()
 
-            cur.execute("INSERT INTO Members (email, name, Password ) "
-            "VALUES (%s, %s, %s);", 
-            (user_Email,user_Name, hashed_password))
-
-
-            conn.commit()
-            cur.close()
-            conn.close()
+            new_user = Members(Email = user_Email, name = user_Name, Password = hashed_password)
+            print(new_user)
+            db.session.add(new_user)
+            db.session.commit()
             print("***********************INSERT success**********************")
-            return jsonify({"status": "success", "message": "register succes", "redirect": "/"}), 200
+            #회원가입후 세션에 넣음
+            session["user"] = user_Email
+            return jsonify({"status": "success", "message": "register success", "redirect": "/"}), 200
         
         except Exception as e:
+            print("commit 실패")
             return jsonify({"status": "fail","message": "register fail2, method not post"})
         
         
     else:
-        print('회원가입 실패2')
+        print('get으로 받음')
         return jsonify({"status": "fail","message": "register fail2, method not post"})
 
 
@@ -218,19 +174,10 @@ def login():
         user_Pw = data.get('inputPw')
         
         try:
-            conn = get_db_connection()
-            cur = conn.cursor()
-
-            cur.execute("select email, Password from Members where email = %s;", [user_Email])
-            user = cur.fetchone()   # 하나의 데이터 가져오기
-                #cur.fetchall()     #모든 데이터 가져오기
-                #cur.fetchmany(3)   #3개 가져오기
-            conn.commit()
-            cur.close()
-            conn.close()
+            user = Members.query.filter_by(Email = user_Email).first()            
  
              #비밀번호 비교
-            if user and bcrypt.check_password_hash(user[1], user_Pw):
+            if user and bcrypt.check_password_hash(user.Password, user_Pw):
                 session["user"] = user_Email
                 print('로그인 성공')
                 return jsonify({"status": "success", "message": "login success", "redirect": "/"}), 200
@@ -247,10 +194,6 @@ def login():
         print('로그인 실패2')
         return jsonify({"status": "fail", "message": "fail , server check please"}),402
 
-
-
-
-
 # 로그아웃
 @app.route("/logout", methods=["POST"])
 def logout():
@@ -261,12 +204,6 @@ def logout():
     session.pop("user", None)
     print('로그아웃')
     return jsonify({"status": "success", "message": "success logout", "redirect": "/"}), 200
-
-# @app.route('/logout')
-# def logout():
-#     session.pop("user", None)  # 세션 삭제
-#     return render_template('index.html')  # Flask가 HTML을 렌더링
-#     return jsonify({"status": "success", "message": "Logged out"}), 200
 
 #로그인 상태 유무 확인
 @app.route("/dashboard")
@@ -284,24 +221,15 @@ def dashboard():
 @app.route('/getNoticeBoardData', methods=['GET'])
 def getNoticeBoardData():
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT Content_SERIAL_id2, Title, holseHead, created_at, viewCount, greatCount FROM Contents ORDER BY created_at DESC")
-        rows = cur.fetchall()
+        page = 1
+        per_page = 20
 
-        # dict 형태로 변환
-        Contents = []
-        for row in rows:
-            Contents.append({
-                "Content_SERIAL_id2": row[0],
-                "Title": row[1],
-                "holseHead": row[2],                
-                "created_at": row[3].strftime("%Y-%m-%d %H:%M"),
-                "viewCount": row[4],
-                "greatCount": row[5]
-            })
+        getContents = Contents.query.paginate(page=page, per_page=per_page, error_out=False).items
+        
+        contents_list = [content.to_dict() for content in getContents]
 
-        return jsonify({"status": "success", "Contents": Contents})
+        return jsonify({"status": "success", "contents": contents_list})
+    
     except Exception as e:
         print("게시글 가져오기 실패:", e)
         return jsonify({"status": "fail", "message": str(e)})
@@ -477,11 +405,6 @@ def auth_callback():
 
 #####################################################################################################
 
-
-# @app.route('/welcom')
-# def welcom():    
-#     print("welcom 호출")
-#     return render_template('welcom.html')  # Flask가 HTML을 렌더링
 
 @app.route('/')
 def home():
