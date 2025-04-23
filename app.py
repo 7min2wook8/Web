@@ -154,8 +154,6 @@ def register():
         print('get으로 받음')
         return jsonify({"status": "fail","message": "register fail2, method not post"})
 
-
-
 # 📌 로그인
 @app.route("/login", methods=["POST"])
 def login():
@@ -215,6 +213,11 @@ def dashboard():
     
     print("dashboard : not Login")
     return jsonify({"status": "fail", "message": "Unauthorized access"})
+
+@app.route('/post/<int:post_id>')
+def view_post(post_id):
+    post = Contents.query.get_or_404(post_id)
+    return render_template('post_detail.html', post=post)
 
 
 #DB에 등록된 게시글의 제목과 글쓴이 좋아요 등등 다수 데이터 불러오기
