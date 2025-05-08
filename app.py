@@ -1,3 +1,4 @@
+import datetime
 from flask import Flask, send_from_directory
 
 #flask 서버 임포
@@ -90,6 +91,19 @@ class Contents(db.Model):
             "viewCount": self.viewCount,
             "greatCount": self.greatCount,
         }
+
+
+class Comment(db.Model):
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('contents.id', ondelete='CASCADE'), nullable=False)
+    author = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # 게시글과의 관계 (선택적, 역참조용)
+    post = db.relationship('Contents', backref=db.backref('comments', cascade='all, delete-orphan', lazy=True))
 
 with app.app_context():
     db.create_all()
@@ -214,10 +228,17 @@ def dashboard():
     print("dashboard : not Login")
     return jsonify({"status": "fail", "message": "Unauthorized access"})
 
+#게시글 선택시 호출
 @app.route('/post/<int:post_id>')
 def view_post(post_id):
     post = Contents.query.get_or_404(post_id)
-    return render_template('post_detail.html', post=post)
+    comments = Comment.query.filter_by(post_id=post_id).order_by(Comment.created_at.asc()).all()
+
+    # 이전글, 다음글 찾기
+    prev_post = Contents.query.filter(Contents.id < post_id).order_by(Contents.id.desc()).first()
+    next_post = Contents.query.filter(Contents.id > post_id).order_by(Contents.id.asc()).first()
+
+    return render_template('post_detail.html', post=post, comments=comments, prev_post=prev_post, next_post=next_post)
 
 
 #DB에 등록된 게시글의 제목과 글쓴이 좋아요 등등 다수 데이터 불러오기
