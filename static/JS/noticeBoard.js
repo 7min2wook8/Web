@@ -55,7 +55,7 @@ if (data.status == "success") {
 
       div.innerHTML += `
       <div class="holseHead">${con.holseHead}</div>
-      <a href="/post/${con.Content_SERIAL_id2}" class="item_title"><div>${con.Title}</div></a>
+      <a href="/post/${con.Content_SERIAL_id}" class="item_title"><div>${con.Title}</div></a>
       <a href="#" class="item_writer"><div>${con.Email} </div></a>
       <div class="item_writeDate">${formattedDate}</div>
       <div class="item_viewCount">${con.viewCount}</div>

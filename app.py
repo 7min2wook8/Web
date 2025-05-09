@@ -70,7 +70,7 @@ class Members(db.Model):
 class Contents(db.Model):
     __tablename__ = 'Contents'
 
-    Content_SERIAL_id2 = db.Column(db.Integer, primary_key=True)
+    Content_SERIAL_id = db.Column(db.Integer, primary_key=True)
     Title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
     Email = db.Column(db.String(100), nullable=False)
@@ -82,7 +82,7 @@ class Contents(db.Model):
 
     def to_dict(self):
         return {
-            "Content_SERIAL_id2": self.Content_SERIAL_id2,
+            "Content_SERIAL_id": self.Content_SERIAL_id,
             "Title": self.Title,
             "content": self.content,
             "Email": self.Email,
@@ -92,15 +92,15 @@ class Contents(db.Model):
             "greatCount": self.greatCount,
         }
 
-
+#댓글 테이블 생성
 class Comment(db.Model):
     __tablename__ = 'comments'
 
     id = db.Column(db.Integer, primary_key=True)
-    post_id = db.Column(db.Integer, db.ForeignKey('contents.id', ondelete='CASCADE'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('Contents.Content_SERIAL_id', ondelete='CASCADE'), nullable=False)
     author = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
 
     # 게시글과의 관계 (선택적, 역참조용)
     post = db.relationship('Contents', backref=db.backref('comments', cascade='all, delete-orphan', lazy=True))
@@ -235,8 +235,8 @@ def view_post(post_id):
     comments = Comment.query.filter_by(post_id=post_id).order_by(Comment.created_at.asc()).all()
 
     # 이전글, 다음글 찾기
-    prev_post = Contents.query.filter(Contents.id < post_id).order_by(Contents.id.desc()).first()
-    next_post = Contents.query.filter(Contents.id > post_id).order_by(Contents.id.asc()).first()
+    prev_post = Contents.query.filter(Contents.Content_SERIAL_id < post_id).order_by(Contents.Content_SERIAL_id.desc()).first()
+    next_post = Contents.query.filter(Contents.Content_SERIAL_id > post_id).order_by(Contents.Content_SERIAL_id.asc()).first()
 
     return render_template('post_detail.html', post=post, comments=comments, prev_post=prev_post, next_post=next_post)
 
@@ -257,6 +257,20 @@ def getNoticeBoardData():
     except Exception as e:
         print("게시글 가져오기 실패:", e)
         return jsonify({"status": "fail", "message": str(e)})
+    
+
+@app.route('/comment', methods=['POST'])
+def add_comment():
+    post_id = request.form['post_id']
+    author = request.form['author']
+    content = request.form['content']
+
+    new_comment = Comment(post_id=post_id, author=author, content=content)
+    db.session.add(new_comment)
+    db.session.commit()
+
+    return redirect(url_for('view_post', post_id=post_id))
+
 # 추가 쿼리 insert into mydb.memberinfo (id,pw,name) values ("7min2wook8@naver.com","qweasd456" ,"parminwook")
 
 ##############################################################################################

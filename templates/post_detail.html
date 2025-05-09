@@ -37,7 +37,29 @@
             </div>
         </div>
         <div class="content_center">
-            댓글
+            <h3>댓글</h3>
+                {% if comments %}
+                <ul>
+                {% for comment in comments %}
+                    <li>
+                        <strong>{{ comment.author }}</strong> - {{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}<br>
+                        {{ comment.content }}
+                    </li>
+                {% endfor %}
+                </ul>
+                {% else %}
+                    <p>댓글이 없습니다.</p>
+                {% endif %}
+        </div>
+        <div class="content_center">
+            
+        <!-- ✅ 댓글 작성 -->
+            <form action="/comment" method="POST">
+                <input type="hidden" name="post_id" value="{{ post.id }}">
+                <input type="text" name="author" placeholder="작성자" required><br>
+                <textarea name="content" placeholder="댓글을 입력하세요" required></textarea><br>
+                <button type="submit">댓글 작성</button>
+            </form>
         </div>
         <div class="content_center">
             <div>
@@ -49,10 +71,24 @@
             <div class="noticeBoard_Item">                    
                            
             </div>
+            <!-- ✅ 이전글/다음글 링크 -->
+            <div style="display: flex; justify-content: space-between;">
+                {% if prev_post %}
+                    <a href="{{ url_for('view_post', post_id=prev_post.Content_SERIAL_id) }}">← {{ prev_post.Title }}</a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+
+                {% if next_post %}
+                    <a href="{{ url_for('view_post', post_id=next_post.Content_SERIAL_id) }}">{{ next_post.Title }} →</a>
+                {% endif %}
+            </div>
         </div>
     </div>
-    
-    <footer id="footer"></footer>
+
+    <footer id="footer">
+        
+    </footer>
     <!-- 부트 스트랩 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
